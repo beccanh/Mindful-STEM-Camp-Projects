@@ -1,0 +1,15 @@
+The bare minimum required for this program to function is the latest version of Python, followed by 
+OpenCV and MegaPi. OpenCV allows us to control the camera we'll need to take snapshots of the garden,
+and MegaPi is what we need to use the controller on the Makeblock Ultimate 2.0 robot.
+
+Python's latest version can be found and installed on their website.
+
+Assuming Python's package installer Pip is installed, OpenCV and MegaPi can be installed natively on your device's terminal. 
+To check if Pip is installed, type "pip --version" in your command line.
+If pip is not installed, enter these commands to install:
+1. curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+2. python get-pip.py
+
+Then enter the following commands to install OpenCV and Megapi:
+"pip install opencv"
+"pip install megapi"
