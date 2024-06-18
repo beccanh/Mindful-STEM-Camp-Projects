@@ -1,0 +1,93 @@
+import speech_recognition as sr
+import pyttsx3
+
+# Class to handle Text-to-Speech (TTS)
+class TTS:
+    def __init__(self):
+        # Initialize the TTS engine
+        self.engine = pyttsx3.init()
+        # Set properties: speed of speech and volume
+        self.engine.setProperty('rate', 150)  # Speed of speech
+        self.engine.setProperty('volume', 1)  # Volume (0.0 to 1.0)
+
+    def say(self, words):
+        # Convert text to speech and wait until it's done speaking
+        self.engine.say(words)
+        self.engine.runAndWait()
+
+    def lang(self, language_code):
+        # Set the language for TTS
+        voices = self.engine.getProperty('voices')
+        for voice in voices:
+            if language_code in voice.id:
+                self.engine.setProperty('voice', voice.id)
+                break
+
+# Initialize TTS
+tts = TTS()
+# Set TTS language to English (US)
+tts.lang("en-US")
+
+# Initialize recognizer for speech recognition
+recognizer = sr.Recognizer()
+
+# Function to get a speech response from the user
+def get_speech(prompt):
+    # Use TTS to ask the question
+    tts.say(prompt)
+    with sr.Microphone() as source:
+        # Print the prompt to the console
+        print(prompt)
+        # Adjust for ambient noise to improve recognition accuracy
+        recognizer.adjust_for_ambient_noise(source)
+        # Listen for the user's response
+        audio = recognizer.listen(source)
+
+        try:
+            # Use Google's speech recognition to convert audio to text
+            response = recognizer.recognize_google(audio)
+            # Print the user's response to the console
+            print("You said: " + response)
+            return response
+        except sr.UnknownValueError:
+            # Handle case where the speech was not understood
+            print("Sorry, I could not understand the audio.")
+            tts.say("Sorry, I could not understand the audio.")
+            return None
+        except sr.RequestError as e:
+            # Handle case where the speech recognition service could not be reached
+            print("Could not request results; {0}".format(e))
+            tts.say("Could not request results.")
+            return None
+
+# Main function to run the questionnaire
+def main():
+    # List of questions to ask
+    questions = [
+        "What region are you from? (Country, state, city, county, etc. In relation to accent dialect)",
+        "What region is your family from?",
+        "Do you speak a certain dialect? If so, which dialect?",
+        "Do all the members of your family speak the same dialect?",
+        "Do you speak another language? If so what language or languages?"
+    ]
+
+    # Dictionary to store responses
+    responses = {}
+
+    # Ask each question and store the response
+    for question in questions:
+        response = None
+        # Keep asking until a valid response is received
+        while response is None:
+            response = get_speech(question)
+        responses[question] = response
+
+    # Print a summary of the responses
+    print("\nSummary of Responses:")
+    for question, response in responses.items():
+        print(f"{question}: {response}")
+
+# Run the main function when the script is executed
+if __name__ == "__main__":
+    main()
+
